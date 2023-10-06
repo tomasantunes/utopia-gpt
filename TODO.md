@@ -1,10 +1,5 @@
 # TODO
 
-- Create a database
-- Create a table for logins
-- Create a table for dialogues to create bots
-- Create a table for posts and replies
-- Create a table for scheduled tasks
 - Install node-cron
 - Setup email account
 - Create login page
