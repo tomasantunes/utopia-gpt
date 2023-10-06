@@ -1,6 +1,5 @@
 # TODO
 
-- Install node-cron
 - Setup email account
 - Create login page
 - Create homepage with today's activity and a datepicker for choosing the day.
