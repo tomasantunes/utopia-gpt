@@ -2,15 +2,18 @@ import React, {useState, useEffect, useRef} from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
 import config from '../config.json';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
   const [images, setImages] = useState([]);
   const [audioSource, setAudioSource] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const audioRef = useRef();
 
-  function loadPosts() {
-    axios.get(config.BASE_URL + '/api/get-posts', {params: {dt: new Date().toISOString().split('T')[0]}})
+  function loadPosts(dt) {
+    axios.get(config.BASE_URL + '/api/get-posts', {params: {dt: dt}})
     .then(function(response) {
       if (response.data.status == "OK") {
         setPosts(response.data.data);
@@ -25,8 +28,8 @@ export default function Home() {
     });
   }
 
-  function loadImages() {
-    axios.get(config.BASE_URL + '/api/get-images', {params: {dt: new Date().toISOString().split('T')[0]}})
+  function loadImages(dt) {
+    axios.get(config.BASE_URL + '/api/get-images', {params: {dt: dt}})
     .then(function(response) {
       if (response.data.status == "OK") {
         setImages(response.data.data);
@@ -67,8 +70,15 @@ export default function Home() {
   }, [audioSource]);
 
   useEffect(() => {
-    loadPosts();
-    loadImages();
+    var dt = selectedDate.toISOString().split('T')[0];
+    loadPosts(dt);
+    loadImages(dt);
+  }, [selectedDate]);
+
+  useEffect(() => {
+    var dt = selectedDate.toISOString().split('T')[0];
+    loadPosts(dt);
+    loadImages(dt);
   }, []);
 
   return (
@@ -76,6 +86,7 @@ export default function Home() {
       <Navbar />
       <div className="small-container">
         <h3>Home</h3>
+        <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date)} />
         <div className="posts">
           <h4>Posts</h4>
           {posts.map((post, index) => (
