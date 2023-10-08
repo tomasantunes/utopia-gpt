@@ -107,13 +107,25 @@ async function getAuthorById(id) {
   return result[0][0].author;
 }
 
+async function getBotById(id) {
+  var sql = "SELECT * FROM bots WHERE id = ?;";
+  var params = [id];
+  var result = await con2.query(sql, params);
+  return result[0][0];
+}
+
 async function createTextPost(bot_id, prompt) {
   console.log("Creating text post...");
+
+  var author = await getAuthorById(bot_id);
+  var bot = await getBotById(bot_id);
+
   var messages = [
+    {role: "user", content: bot.initial_prompt},
+    {role: "assistant", content: bot.initial_answer},
     {role: "user", content: prompt}
   ];
 
-  var author = await getAuthorById(bot_id);
   var answer = await getAnswer(messages);
 
   var sql = "INSERT INTO posts (parent_id, bot_id, author, content, is_user) VALUES (0, ?, ?, ?, 0)";
@@ -190,7 +202,6 @@ function loadCronJobs() {
     for (var i = 0; i < result.length; i++) {
       console.log("Task is being scheduled.");
       var task = cron.schedule(result[i].cron_string, function() {
-        // TO-DO: check type and call a different function for each type.
         if (cron_is_running == false) {
           cron_is_running = true;
           if (result[i].type == "text_post") {
@@ -226,11 +237,15 @@ async function createNewsPost(bot_id, prompt) {
   var intro = "Here are the news: \n\n";
   prompt = intro + news_content + "\n\n" + prompt;
 
+  var author = await getAuthorById(bot_id);
+  var bot = await getBotById(bot_id);
+
   var messages = [
-    {role: "user", content: prompt},
+    {role: "user", content: bot.initial_prompt},
+    {role: "assistant", content: bot.initial_answer},
+    {role: "user", content: prompt}
   ];
 
-  var author = await getAuthorById(bot_id);
   var answer = await getAnswer(messages);
 
   var sql = "INSERT INTO posts (parent_id, bot_id, author, content, is_user) VALUES (0, ?, ?, ?, 0)";
@@ -254,7 +269,6 @@ loadCronJobs();
 function addCronJob(bot_id, prompt, cron_string, type) {
   console.log("Task is being scheduled.");
   var task = cron.schedule(cron_string, function() {
-    // TO-DO: check type and call a different function for each type.
     if (cron_is_running == false) {
       cron_is_running = true;
       if (type == "text_post") {
@@ -278,11 +292,16 @@ function addCronJob(bot_id, prompt, cron_string, type) {
 }
 
 async function createEmail(bot_id, prompt) {
-  var messages = [
-    {role: "user", content: prompt}
-  ];
 
   var author = await getAuthorById(bot_id);
+  var bot = await getBotById(bot_id);
+
+  var messages = [
+    {role: "user", content: bot.initial_prompt},
+    {role: "assistant", content: bot.initial_answer},
+    {role: "user", content: prompt}
+  ];
+  
   var answer = await getAnswer(messages);
 
   answer += "\n\n by " + author;
