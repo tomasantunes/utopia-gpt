@@ -22,5 +22,5 @@ npm install
 npm run build
 cd ..
 npm start
-Go to the browser at localhost:4003
+Go to the browser at localhost:4010
 ```
