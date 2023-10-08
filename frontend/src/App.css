@@ -7,3 +7,16 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.small-container {
+  margin-top: 25px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.post {
+  margin: 5px;
+  background-color: #ccc;
+  padding: 10px;
+  white-space: pre-line;
+}
