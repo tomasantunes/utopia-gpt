@@ -20,3 +20,10 @@
   padding: 10px;
   white-space: pre-line;
 }
+
+.task {
+  margin: 5px;
+  background-color: #ccc;
+  padding: 10px;
+  white-space: pre-line;
+}

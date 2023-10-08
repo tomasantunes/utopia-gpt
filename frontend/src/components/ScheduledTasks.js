@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 export default function ScheduledTasks() {
   const [selectBots, setSelectBots] = useState([]);
   const [selectedBot, setSelectedBot] = useState(null);
+  const [tasks, setTasks] = useState([]);
   const [cronString, setCronString] = useState("");
   const [prompt, setPrompt] = useState("");
   const [selectedType, setSelectedType] = useState(null);
@@ -69,8 +70,40 @@ export default function ScheduledTasks() {
     });
   }
 
+  function loadTasks() {
+    axios.get(config.BASE_URL + "/api/get-scheduled-tasks")
+    .then(response => {
+      if (response.data.status == "OK") {
+        setTasks(response.data.data);
+      }
+      else {
+        alert(response.data.error);
+      }
+    })
+    .catch(err => {
+      alert(err.message);
+    });
+  }
+
+  function deleteTask(id) {
+    axios.post(config.BASE_URL + "/api/delete-scheduled-task", {id})
+    .then(response => {
+      if (response.data.status == "OK") {
+        alert("Scheduled task deleted successfully.");
+        loadTasks();
+      }
+      else {
+        alert(response.data.error);
+      }
+    })
+    .catch(err => {
+      alert(err.message);
+    });
+  }
+
   useEffect(() => {
     loadSelectBots();
+    loadTasks();
   }, [])
   return (
     <>
@@ -95,6 +128,26 @@ export default function ScheduledTasks() {
         </div>
         <div style={{textAlign: "right"}}>
           <button className="btn btn-primary" onClick={createScheduledTask}>Create Task</button>
+        </div>
+
+        <hr />
+
+        <h3>Tasks</h3>
+        <div className="tasks">
+          {tasks.map((task, index) => (
+            <>
+              <div className="task" key={task.id}>
+                <div style={{textAlign: "right"}}>
+                  <button className="btn btn-danger btn-sm" onClick={(e) => deleteTask(task.id)}>Delete</button>
+                </div>
+                <p><b>{task.author}</b></p>
+                <p><b>Cron String: </b>{task.cron_string}</p>
+                <p><b>Prompt: </b>{task.prompt}</p>
+                <p><b>Type: </b>{task.type}</p>
+              </div>
+              <hr />
+            </>
+          ))}
         </div>
       </div>
     </>

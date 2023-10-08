@@ -295,6 +295,7 @@ function stopAllCronJobs() {
   for (var i = 0; i < cron_jobs.length; i++) {
     cron_jobs[i].stop();
   }
+  cron_jobs = [];
 }
 
 app.get("/api/get-audio", (req, res) => {
@@ -524,6 +525,47 @@ app.get("/api/get-bots", (req, res) => {
       return;
     }
     res.json({status: "OK", data: result});
+  });
+});
+
+app.get("/api/get-scheduled-tasks", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var sql = "SELECT st.*, b.author FROM scheduled_tasks st INNER JOIN bots b ON st.bot_id = b.id ORDER BY st.id DESC";
+  con.query(sql, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+    res.json({status: "OK", data: result});
+  });
+});
+
+app.post("/api/delete-scheduled-task", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var id = req.body.id;
+
+  var sql = "DELETE FROM scheduled_tasks WHERE id = ?;";
+  var params = [id];
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+
+    stopAllCronJobs();
+    loadCronJobs();
+
+    res.json({status: "OK", data: "Scheduled task deleted successfully."});
   });
 });
 
