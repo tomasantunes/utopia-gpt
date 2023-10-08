@@ -60,6 +60,7 @@ export default function ScheduledTasks() {
     .then(res => {
       if (res.data.status == "OK") {
         alert("Scheduled task created successfully.");
+        loadTasks();
       }
       else {
         alert(res.data.error);
