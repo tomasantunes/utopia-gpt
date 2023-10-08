@@ -3,6 +3,7 @@ import Select from 'react-select';
 import axios from 'axios';
 import config from '../config.json';
 import Navbar from './Navbar';
+import { set } from '../../../app';
 
 export default function ScheduledTasks() {
   const [selectBots, setSelectBots] = useState([]);
@@ -61,6 +62,10 @@ export default function ScheduledTasks() {
       if (res.data.status == "OK") {
         alert("Scheduled task created successfully.");
         loadTasks();
+        setCronString("");
+        setPrompt("");
+        setSelectedType(null);
+        setSelectedBot(null);
       }
       else {
         alert(res.data.error);
