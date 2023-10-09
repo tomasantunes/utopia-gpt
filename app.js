@@ -453,6 +453,15 @@ app.get("/api/get-images", (req, res) => {
   });
 });
 
+app.get("/api/get-current-cron-jobs", (req, res) =>  {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  res.json({status: "OK", data: cron_jobs});
+});
+
 
 app.post("/api/create-scheduled-task", (req, res) => {
   if (!req.session.isLoggedIn) {
