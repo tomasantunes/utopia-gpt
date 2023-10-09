@@ -202,6 +202,7 @@ function loadCronJobs() {
     for (var i = 0; i < result.length; i++) {
       console.log("Task is being scheduled.");
       var task = cron.schedule(result[i].cron_string, function() {
+        console.log("Task is being executed.");
         if (cron_is_running == false) {
           cron_is_running = true;
           if (result[i].type == "text_post") {
@@ -219,6 +220,9 @@ function loadCronJobs() {
           setTimeout(function() {
             cron_is_running = false;
           }, 1000);
+        }
+        else {
+          console.log("Task is already running.");
         }
       });
       cron_jobs.push(task);
