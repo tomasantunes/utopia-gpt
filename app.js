@@ -200,34 +200,38 @@ function loadCronJobs() {
       return;
     }
     for (var i = 0; i < result.length; i++) {
-      console.log("Task is being scheduled.");
-      var task = cron.schedule(result[i].cron_string, function() {
-        console.log("Task is being executed.");
-        if (cron_is_running == false) {
-          cron_is_running = true;
-          if (result[i].type == "text_post") {
-            createTextPost(result[i].bot_id, result[i].prompt);
-          }
-          else if (result[i].type == "image_post") {
-            createImagePost(result[i].bot_id, result[i].prompt);
-          }
-          else if (result[i].type == "email") {
-            createEmail(result[i].bot_id, result[i].prompt);
-          }
-          else if (result[i].type == "news_post") {
-            createNewsPost(result[i].bot_id, result[i].prompt);
-          }
-          setTimeout(function() {
-            cron_is_running = false;
-          }, 1000);
-        }
-        else {
-          console.log("Task is already running.");
-        }
-      });
-      cron_jobs.push(task);
+      scheduleCronJob(result[i].type, result[i].bot_id, result[i].prompt, result[i].cron_string);
     }
   });
+}
+
+function scheduleCronJob(type, bot_id, prompt, cron_string) {
+  console.log("Task is being scheduled.");
+  var task = cron.schedule(cron_string, function() {
+    console.log("Task is being executed.");
+    if (cron_is_running == false) {
+      cron_is_running = true;
+      if (type == "text_post") {
+        createTextPost(bot_id, prompt);
+      }
+      else if (type == "image_post") {
+        createImagePost(bot_id, prompt);
+      }
+      else if (type == "email") {
+        createEmail(bot_id, prompt);
+      }
+      else if (type == "news_post") {
+        createNewsPost(bot_id, prompt);
+      }
+      setTimeout(function() {
+        cron_is_running = false;
+      }, 1000);
+    }
+    else {
+      console.log("Task is already running.");
+    }
+  });
+  cron_jobs.push(task);
 }
 
 async function doTaskNow(id) {
