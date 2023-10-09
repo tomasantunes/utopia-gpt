@@ -459,7 +459,7 @@ app.get("/api/get-current-cron-jobs", (req, res) =>  {
     return;
   }
 
-  res.json({status: "OK", data: cron_jobs});
+  res.json({status: "OK", data: "There are a total of " + cron_jobs.length + " cron jobs running."});
 });
 
 
