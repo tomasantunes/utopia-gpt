@@ -294,31 +294,6 @@ async function getNews() {
 
 loadCronJobs();
 
-function addCronJob(bot_id, prompt, cron_string, type) {
-  console.log("Task is being scheduled.");
-  var task = cron.schedule(cron_string, function() {
-    if (cron_is_running == false) {
-      cron_is_running = true;
-      if (type == "text_post") {
-        createTextPost(bot_id, prompt);
-      }
-      else if (type == "image_post") {
-        createImagePost(bot_id, prompt);
-      }
-      else if (type == "email") {
-        createEmail(bot_id, prompt);
-      }
-      else if (type == "news_post") {
-        createNewsPost(bot_id, prompt);
-      }
-      setTimeout(function() {
-        cron_is_running = false;
-      }, 1000);
-    }
-  });
-  cron_jobs.push(task);
-}
-
 async function createEmail(bot_id, prompt) {
 
   var author = await getAuthorById(bot_id);
@@ -490,7 +465,7 @@ app.post("/api/create-scheduled-task", (req, res) => {
       res.json({status: "NOK", error: err.message});
       return;
     }
-    addCronJob(bot_id, prompt, cron_string, type);
+    scheduleCronJob(type, bot_id, prompt, cron_string);
     res.json({status: "OK", data: "Scheduled task created successfully."});
   });
 });
