@@ -159,7 +159,7 @@ export default function ScheduledTasks() {
             <>
               <div className="task" key={task.id}>
                 <div style={{textAlign: "right"}}>
-                  <button className="btn btn-success btn-sm" onClick={(e) => doTaskNow(task.id)}>Do It Now</button>
+                  <button className="btn btn-success btn-sm mr-2" onClick={(e) => doTaskNow(task.id)}>Do It Now</button>
                   <button className="btn btn-danger btn-sm" onClick={(e) => deleteTask(task.id)}>Delete</button>
                 </div>
                 <p><b>{task.author}</b></p>
