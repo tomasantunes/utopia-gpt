@@ -226,6 +226,26 @@ function loadCronJobs() {
   });
 }
 
+async function doTaskNow(id) {
+  var sql = "SELECT * FROM scheduled_tasks WHERE id = ?";
+  var params = [id];
+  var result = await con2.query(sql, params);
+  var task = result[0][0];
+
+  if (task.type == "text_post") {
+    createTextPost(task.bot_id, task.prompt);
+  }
+  else if (task.type == "image_post") {
+    createImagePost(task.bot_id, task.prompt);
+  }
+  else if (task.type == "email") {
+    createEmail(task.bot_id, task.prompt);
+  }
+  else if (task.type == "news_post") {
+    createNewsPost(task.bot_id, task.prompt);
+  }
+}
+
 async function createNewsPost(bot_id, prompt) {
   var news = await getNews();
   var news_content = "";
@@ -301,7 +321,7 @@ async function createEmail(bot_id, prompt) {
     {role: "assistant", content: bot.initial_answer},
     {role: "user", content: prompt}
   ];
-  
+
   var answer = await getAnswer(messages);
 
   answer += "\n\n by " + author;
@@ -337,6 +357,17 @@ app.get("/api/get-image", (req, res) => {
   var filename = req.query.filename;
 
   res.sendFile(path.resolve(__dirname) + "/images/"+filename);
+});
+
+app.post("/api/do-task-now", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var id = req.body.id;
+  doTaskNow(id);
+  res.json({status: "OK", data: "Task is being processed."});
 });
 
 app.get("/api/text-to-speech", (req, res) => {

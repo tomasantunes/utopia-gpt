@@ -55,6 +55,22 @@ export default function ScheduledTasks() {
     setSelectedType(type);
   }
 
+  function doTaskNow(id) {
+    axios.post(config.BASE_URL + "/api/do-task-now", {id})
+    .then(res => {
+      if (res.data.status == "OK") {
+        alert("Task done successfully.");
+        loadTasks();
+      }
+      else {
+        alert(res.data.error);
+      }
+    })
+    .catch(err => {
+      alert(err.message);
+    });
+  }
+
   function createScheduledTask() {
     axios.post(config.BASE_URL + "/api/create-scheduled-task", {bot_id: selectedBot.value, cron_string: cronString, prompt, type: selectedType.value})
     .then(res => {
@@ -143,6 +159,7 @@ export default function ScheduledTasks() {
             <>
               <div className="task" key={task.id}>
                 <div style={{textAlign: "right"}}>
+                  <button className="btn btn-success btn-sm" onClick={(e) => doTaskNow(task.id)}>Do It Now</button>
                   <button className="btn btn-danger btn-sm" onClick={(e) => deleteTask(task.id)}>Delete</button>
                 </div>
                 <p><b>{task.author}</b></p>
