@@ -463,6 +463,9 @@ app.get("/api/text-to-speech", (req, res) => {
       return;
     }
     var content = result[0].content;
+    if (content.length > 3000) {
+      content = content.substring(0, 3000);
+    }
     var params = {
       OutputFormat: "mp3",
       Text: content,
