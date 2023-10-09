@@ -220,8 +220,14 @@ function scheduleCronJob(type, bot_id, prompt, cron_string) {
       else if (type == "email") {
         createEmail(bot_id, prompt);
       }
-      else if (type == "news_post") {
-        createNewsPost(bot_id, prompt);
+      else if (type == "us_news_post") {
+        createUSNewsPost(task.bot_id, task.prompt);
+      }
+      else if (type == "pt_news_post") {
+        createPTNewsPost(task.bot_id, task.prompt);
+      }
+      else if (type == "tech_news_post") {
+        createTechNewsPost(task.bot_id, task.prompt);
       }
       setTimeout(function() {
         cron_is_running = false;
@@ -249,13 +255,19 @@ async function doTaskNow(id) {
   else if (task.type == "email") {
     createEmail(task.bot_id, task.prompt);
   }
-  else if (task.type == "news_post") {
-    createNewsPost(task.bot_id, task.prompt);
+  else if (task.type == "us_news_post") {
+    createUSNewsPost(task.bot_id, task.prompt);
+  }
+  else if (task.type == "pt_news_post") {
+    createPTNewsPost(task.bot_id, task.prompt);
+  }
+  else if (task.type == "tech_news_post") {
+    createTechNewsPost(task.bot_id, task.prompt);
   }
 }
 
-async function createNewsPost(bot_id, prompt) {
-  var news = await getNews();
+async function createUSNewsPost(bot_id, prompt) {
+  var news = await getUSNews();
   var news_content = "";
 
   for (var i in news) {
@@ -287,8 +299,84 @@ async function createNewsPost(bot_id, prompt) {
   });
 }
 
-async function getNews() {
+async function createPTNewsPost(bot_id, prompt) {
+  var news = await getPTNews();
+  var news_content = "";
+
+  for (var i in news) {
+    news_content += news[i].description + "\n\n";
+  }
+
+  var intro = "Here are the news: \n\n";
+  prompt = intro + news_content + "\n\n" + prompt;
+
+  var author = await getAuthorById(bot_id);
+  var bot = await getBotById(bot_id);
+
+  var messages = [
+    {role: "user", content: bot.initial_prompt},
+    {role: "assistant", content: bot.initial_answer},
+    {role: "user", content: prompt}
+  ];
+
+  var answer = await getAnswer(messages);
+
+  var sql = "INSERT INTO posts (parent_id, bot_id, author, content, is_user) VALUES (0, ?, ?, ?, 0)";
+  var params = [bot_id, author, answer];
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log("Post created successfully.");
+  });
+}
+
+async function createTechNewsPost(bot_id, prompt) {
+  var news = await getTechNews();
+  var news_content = "";
+
+  for (var i in news) {
+    news_content += news[i].description + "\n\n";
+  }
+
+  var intro = "Here are the news: \n\n";
+  prompt = intro + news_content + "\n\n" + prompt;
+
+  var author = await getAuthorById(bot_id);
+  var bot = await getBotById(bot_id);
+
+  var messages = [
+    {role: "user", content: bot.initial_prompt},
+    {role: "assistant", content: bot.initial_answer},
+    {role: "user", content: prompt}
+  ];
+
+  var answer = await getAnswer(messages);
+
+  var sql = "INSERT INTO posts (parent_id, bot_id, author, content, is_user) VALUES (0, ?, ?, ?, 0)";
+  var params = [bot_id, author, answer];
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log("Post created successfully.");
+  });
+}
+
+async function getUSNews() {
   var news = await axios.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=" + secretConfig.NEWSAPI_KEY);
+  return news.data.articles;
+}
+
+async function getPTNews() {
+  var news = await axios.get("https://newsapi.org/v2/top-headlines?country=pt&apiKey=" + secretConfig.NEWSAPI_KEY);
+  return news.data.articles;
+}
+
+async function getTechNews() {
+  var news = await axios.get("https://newsapi.org/v2/top-headlines?country=us&category=technology&apiKey=" + secretConfig.NEWSAPI_KEY);
   return news.data.articles;
 }
 

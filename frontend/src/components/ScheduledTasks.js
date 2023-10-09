@@ -16,7 +16,9 @@ export default function ScheduledTasks() {
     {value: "text_post", label: "Text Post"},
     {value: "image_post", label: "Image Post"},
     {value: "email", label: "Email"},
-    {value: "news_post", label: "News Post"}
+    {value: "us_news_post", label: "US News Post"},
+    {value: "pt_news_post", label: "PT News Post"},
+    {value: "tech_news_post", label: "Tech News Post"}
   ]
 
   function loadSelectBots() {
