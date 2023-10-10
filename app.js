@@ -538,7 +538,7 @@ app.get("/api/emails/text-to-speech", (req, res) => {
     if (content.length > 3000) {
       content = content.substring(0, 3000);
     }
-    content = content.replace(/<br>/g, "\n");
+    content = content.replace("<br>", "\n");
     var params = {
       OutputFormat: "mp3",
       Text: content,
