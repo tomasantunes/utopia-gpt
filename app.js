@@ -394,10 +394,23 @@ async function createEmail(bot_id, prompt) {
   ];
 
   var answer = await getAnswer(messages);
+  answer = answer.replace(/(?:\r\n|\r|\n)/g, '<br>');
+  answer += "<br><br> by " + author;
 
-  answer += "\n\n by " + author;
+  var sql = "INSERT INTO emails (bot_id, author, content) VALUES (?, ?, ?)";
+  var params = [bot_id, author, answer];
 
-  sendEmail(answer);
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    answer += "<br><br><a href='https://utopiagpt.paken.xyz/email/" + result.insertId + "'>Click here to view the email.</a>";
+    sendEmail(answer);
+  });
+
+
+  
 }
 
 function stopAllCronJobs() {
@@ -486,6 +499,74 @@ app.get("/api/text-to-speech", (req, res) => {
         res.json({status: "OK", data: "Audio file created successfully."});
       });
     });
+  });
+});
+
+app.get("/api/emails/text-to-speech", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var id = req.query.id;
+
+  if (fs.existsSync("email-speech/"+id+".mp3")) {
+    res.json({status: "OK", data: "Audio file exists."});
+    return;
+  }
+
+  var sql = "SELECT * FROM emails WHERE id = ?;";
+  var params = [id];
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+    var content = result[0].content;
+    if (content.length > 3000) {
+      content = content.substring(0, 3000);
+    }
+    var params = {
+      OutputFormat: "mp3",
+      Text: content,
+      VoiceId: "Emma"
+    };
+    Polly.synthesizeSpeech(params, function(err, data) {
+      if (err) {
+        console.log(err);
+        res.json({status: "NOK", error: err.message});
+        return;
+      }
+      fs.writeFile("email-speech/"+id+".mp3", data.AudioStream, function(err) {
+        if (err) {
+          console.log(err);
+          res.json({status: "NOK", error: err.message});
+          return;
+        }
+        res.json({status: "OK", data: "Audio file created successfully."});
+      });
+    });
+  });
+});
+
+app.get("/api/get-email", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var id = req.query.id;
+
+  var sql = "SELECT * FROM emails WHERE id = ?;";
+  var params = [id];
+  con.query(sql, params, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json({status: "NOK", error: err.message});
+      return;
+    }
+    res.json({status: "OK", data: result[0]});
   });
 });
 
@@ -716,7 +797,7 @@ function sendEmail(text) {
     from: secretConfig.SMTP_EMAIL,
     to: secretConfig.RECIPIENT_EMAIL,
     subject: "Message From Utopia GPT",
-    text: text
+    html: text
   };
 
   transport.sendMail(mailOptions, function(error, info){
@@ -762,6 +843,15 @@ app.get('/create-bot', (req, res) => {
 });
 
 app.get('/scheduled-tasks', (req, res) => {
+  if(req.session.isLoggedIn) {
+    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/email/:id', (req, res) => {
   if(req.session.isLoggedIn) {
     res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
   }
