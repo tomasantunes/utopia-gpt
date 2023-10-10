@@ -432,6 +432,17 @@ app.get("/api/get-audio", (req, res) => {
   res.sendFile(path.resolve(__dirname) + "/speech/"+id+".mp3");
 });
 
+app.get("/api/emails/get-audio", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.json({status: "NOK", error: "Invalid Authorization."});
+    return;
+  }
+
+  var id = req.query.id;
+
+  res.sendFile(path.resolve(__dirname) + "/email-speech/"+id+".mp3");
+});
+
 app.get("/api/get-image", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});

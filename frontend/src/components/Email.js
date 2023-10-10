@@ -34,7 +34,7 @@ export default function Email() {
     axios.get(config.BASE_URL + '/api/emails/text-to-speech', {params: {id}})
     .then(function(response) {
       if (response.data.status == "OK") {
-        updateAudio(config.BASE_URL + "/api/get-audio/?id=" + id);
+        updateAudio(config.BASE_URL + "/api/emails/get-audio/?id=" + id);
       }
       else {
         alert(response.data.error);
