@@ -513,6 +513,14 @@ app.get("/api/text-to-speech", (req, res) => {
   });
 });
 
+function removeTags(str) { 
+  if ((str===null) || (str==='')) 
+      return false; 
+  else
+      str = str.toString(); 
+  return str.replace( /(<([^>]+)>)/ig, ''); 
+} 
+
 app.get("/api/emails/text-to-speech", (req, res) => {
   if (!req.session.isLoggedIn) {
     res.json({status: "NOK", error: "Invalid Authorization."});
@@ -521,7 +529,10 @@ app.get("/api/emails/text-to-speech", (req, res) => {
 
   var id = req.query.id;
 
+  console.log("Email Text to Speech.");
+
   if (fs.existsSync("email-speech/"+id+".mp3")) {
+    console.log("Audio file exists");
     res.json({status: "OK", data: "Audio file exists."});
     return;
   }
@@ -535,10 +546,12 @@ app.get("/api/emails/text-to-speech", (req, res) => {
       return;
     }
     var content = result[0].content;
+    console.log(content);
     if (content.length > 3000) {
       content = content.substring(0, 3000);
     }
-    content = content.replace("<br>", "\n");
+    content = removeTags(content);
+    console.log(content);
     var params = {
       OutputFormat: "mp3",
       Text: content,
