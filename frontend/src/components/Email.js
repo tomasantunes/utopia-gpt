@@ -1,7 +1,8 @@
-import React, {useState, useEffect, useParams} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import config from '../config.json';
+import { useParams } from 'react-router-dom';
 
 export default function Email() {
   const { id } = useParams();
