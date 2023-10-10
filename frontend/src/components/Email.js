@@ -67,7 +67,7 @@ export default function Email() {
             <button className="btn btn-primary btn-sm" onClick={(e) => listen(email.id)}>Listen</button>
           </div>
           <p><b>{email.author}</b></p>
-          <div dangerouslySetInnerHtml={email.content}></div>
+          <div dangerouslySetInnerHtml={{__html: email.content}}></div>
         </div>
         <hr />
       </div>
