@@ -221,13 +221,13 @@ function scheduleCronJob(type, bot_id, prompt, cron_string) {
         createEmail(bot_id, prompt);
       }
       else if (type == "us_news_post") {
-        createUSNewsPost(task.bot_id, task.prompt);
+        createUSNewsPost(bot_id, task.prompt);
       }
       else if (type == "pt_news_post") {
-        createPTNewsPost(task.bot_id, task.prompt);
+        createPTNewsPost(bot_id, task.prompt);
       }
       else if (type == "tech_news_post") {
-        createTechNewsPost(task.bot_id, task.prompt);
+        createTechNewsPost(bot_id, task.prompt);
       }
       setTimeout(function() {
         cron_is_running = false;
