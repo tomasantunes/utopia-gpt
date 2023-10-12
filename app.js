@@ -271,7 +271,7 @@ async function createUSNewsPost(bot_id, prompt) {
   var news_content = "";
 
   for (var i in news) {
-    news_content += news[i].description + "\n\n";
+    news_content += news[i].title + "\n\n";
   }
 
   var intro = "Here are the news: \n\n";
@@ -337,7 +337,7 @@ async function createTechNewsPost(bot_id, prompt) {
   var news_content = "";
 
   for (var i in news) {
-    news_content += news[i].description + "\n\n";
+    news_content += news[i].title + "\n\n";
   }
 
   var intro = "Here are the news: \n\n";
