@@ -518,7 +518,7 @@ function removeTags(str) {
       return false; 
   else
       str = str.toString(); 
-  return str.replace( /(<([^>]+)>)/ig, ''); 
+  return str.replace( /(<([^>]+)>)/ig, '\n\n'); 
 } 
 
 app.get("/api/emails/text-to-speech", (req, res) => {
