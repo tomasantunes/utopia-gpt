@@ -843,15 +843,15 @@ app.get('/', (req, res) => {
   }
 });
 
-app.use(express.static(path.resolve(__dirname) + '/frontend/build'));
+app.use(express.static(path.resolve(__dirname) + '/frontend/dist'));
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+  res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
 });
 
 app.get('/home', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -860,7 +860,7 @@ app.get('/home', (req, res) => {
 
 app.get('/create-bot', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -869,7 +869,7 @@ app.get('/create-bot', (req, res) => {
 
 app.get('/scheduled-tasks', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');
@@ -878,7 +878,7 @@ app.get('/scheduled-tasks', (req, res) => {
 
 app.get('/email/:id', (req, res) => {
   if(req.session.isLoggedIn) {
-    res.sendFile(path.resolve(__dirname) + '/frontend/build/index.html');
+    res.sendFile(path.resolve(__dirname) + '/frontend/dist/index.html');
   }
   else {
     res.redirect('/login');

@@ -6,19 +6,19 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "aws-sdk": "^2.1472.0",
-    "axios": "^1.5.1",
-    "cookie-parser": "~1.4.4",
+    "aws-sdk": "^2.1692.0",
+    "axios": "^1.12.2",
+    "cookie-parser": "~1.4.7",
     "cors": "^2.8.5",
-    "debug": "~2.6.9",
-    "ejs": "~2.6.1",
-    "express": "~4.16.1",
-    "express-session": "^1.17.3",
-    "http-errors": "~1.6.3",
-    "morgan": "~1.9.1",
-    "mysql2": "^3.6.1",
-    "node-cron": "^3.0.2",
-    "nodemailer": "^6.9.5",
-    "openai": "^4.11.1"
+    "debug": "~4.4.3",
+    "ejs": "~3.1.10",
+    "express": "~5.1.0",
+    "express-session": "^1.18.2",
+    "http-errors": "~2.0.0",
+    "morgan": "~1.10.1",
+    "mysql2": "^3.15.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.6",
+    "openai": "^5.22.0"
   }
 }
