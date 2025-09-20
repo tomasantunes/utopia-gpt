@@ -96,7 +96,7 @@ var cron_is_running = false;
 AWS.config = new AWS.Config();
 AWS.config.accessKeyId = secretConfig.AWS_ACCESS_KEY_ID;
 AWS.config.secretAccessKey = secretConfig.AWS_SECRET_ACCESS_KEY;
-AWS.config.region = "eu-north-1";
+AWS.config.region = "us-east-1";
 
 const Polly = new AWS.Polly();
 
